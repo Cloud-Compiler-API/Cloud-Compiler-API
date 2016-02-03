@@ -56,6 +56,14 @@
         }
 
         /*
+         * Cleans whole temp folder
+         */
+        public static function cleanAll() {
+            Ideone::resetData();
+            Ideone::cleanErrorLog();
+        }
+
+        /*
          * Gives an associative array of all errors that are logged
          */
         public static function getErrorLog() {

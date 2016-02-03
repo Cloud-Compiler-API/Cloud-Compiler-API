@@ -9,12 +9,6 @@
         return $value;
     }
 
-    if(isset($_GET['cleanLog']) && $_GET['cleanLog'] == 1) {
-        Ideone::cleanErrorLog();
-    }
-
-    $response['errorLog'] = Ideone::getErrorLog();
-
     $langs = Ideone::getLanguages();
     if(is_array($langs)) {
         $response['langUpdate'] = false;
@@ -40,6 +34,16 @@
             'errorDesc' => $errorDesc
         );
     }
+
+    if(isset($_GET['cleanLog']) && $_GET['cleanLog'] == 1) {
+        Ideone::cleanErrorLog();
+    }
+
+    if(isset($_GET['cleanAll']) && $_GET['cleanAll'] == 1) {
+        Ideone::cleanAll();
+    }
+
+    $response['errorLog'] = Ideone::getErrorLog();
 
     header('Content-Type: application/json');
     echo json_encode($response);
