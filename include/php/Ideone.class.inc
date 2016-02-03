@@ -49,6 +49,75 @@
         }
 
         /*
+         * Cleans the error log which is stored in temp folder
+         */
+        public static function cleanErrorLog() {
+            file_put_contents($GLOBALS['config']['tempLocation'] . '/errorLog.txt', '');
+        }
+
+        /*
+         * Gives an associative array of all errors that are logged
+         */
+        public static function getErrorLog() {
+            $result = array();
+            $logFile = file_get_contents($GLOBALS['config']['tempLocation'] . '/errorLog.txt');
+            $errors = explode(' $$ ', $logFile);
+            if($errors[0] != '') {
+                foreach($errors as $error) {
+                    $errTemp = explode(' || ', $error);
+                    $errArr['error'] = $errTemp[0];
+                    $errArr['errorCode'] = $errTemp[1];
+                    $errArr['funcName'] = $errTemp[2];
+                    $errArr['timestamp'] = $errTemp[3];
+                    array_push($result, $errArr);
+                }
+            }
+
+            return $result;
+        }
+
+        /*
+         * Logs error to a file for debugging purposes
+         */
+        private static function logError($error, $func) {
+            $errorData = array();
+            switch($error) {
+                case Ideone::UNKNOWN_ERROR:
+                    $errorData['error'] = 'UNKNOWN_ERROR';
+                    $errorData['errorCode'] = Ideone::UNKNOWN_ERROR;
+                    break;
+                case Ideone::CURL_ERROR:
+                    $errorData['error'] = 'CURL_ERROR';
+                    $errorData['errorCode'] = Ideone::CURL_ERROR;
+                    break;
+                case Ideone::SCRAPE_ERROR:
+                    $errorData['error'] = 'SCRAPE_ERROR';
+                    $errorData['errorCode'] = Ideone::SCRAPE_ERROR;
+                    break;
+                case Ideone::LOGIN_ERROR:
+                    $errorData['error'] = 'LOGIN_ERROR';
+                    $errorData['errorCode'] = Ideone::LOGIN_ERROR;
+                    break;
+                case Ideone::REDIRECTION_ERROR:
+                    $errorData['error'] = 'REDIRECTION_ERROR';
+                    $errorData['errorCode'] = Ideone::REDIRECTION_ERROR;
+                    break;
+            }
+            $errorData['funcName'] = $func;
+            $errorData['timestamp'] = date("Y-m-d H:i:s");
+            $errorLog = Ideone::getErrorLog();
+            array_push($errorLog, $errorData);
+
+            $n = 0;
+            foreach ($errorLog as $errorItem) {
+                $errorLog[$n] = implode(' || ', $errorItem);
+                $n++;
+            }
+            $logData = implode(' $$ ', $errorLog);
+            file_put_contents($GLOBALS['config']['tempLocation'] . '/errorLog.txt', $logData);
+        }
+
+        /*
          * Creates a new session with an expiry as in config file
          */
         private static function newSession() {
@@ -66,6 +135,7 @@
 
                 return true;
             } else {
+                Ideone::logError(Ideone::CURL_ERROR, 'newSession');
                 return Ideone::CURL_ERROR;
             }
         }
@@ -119,6 +189,7 @@
                         return false;
                     }
                 } else {
+                    Ideone::logError(Ideone::SCRAPE_ERROR, 'checkLogin');
                     return Ideone::SCRAPE_ERROR;
                 }
             } else {
@@ -143,9 +214,11 @@
                     if($response['response']['http_code'] == 302) {
                         return Ideone::newSession();
                     } else {
+                        Ideone::logError(Ideone::LOGIN_ERROR, 'login');
                         return Ideone::LOGIN_ERROR;
                     }
                 } else {
+                    Ideone::logError(Ideone::CURL_ERROR, 'login');
                     return Ideone::CURL_ERROR;
                 }
             } else {
@@ -181,6 +254,7 @@
                                     array_push($languages, $lang_desc);
                                     $flag = 1;
                                 } else {
+                                    Ideone::logError(Ideone::SCRAPE_ERROR, 'getLanguages');
                                     return Ideone::SCRAPE_ERROR;
                                 }
                             }
@@ -190,9 +264,11 @@
                         usort($languages, 'customcmp');
                         return $languages;
                     } else {
+                        Ideone::logError(Ideone::SCRAPE_ERROR, 'getLanguages');
                         return Ideone::SCRAPE_ERROR;
                     }
                 } else {
+                    Ideone::logError(Ideone::SCRAPE_ERROR, 'getLanguages');
                     return Ideone::SCRAPE_ERROR;
                 }
             } else {
@@ -231,6 +307,7 @@
                         return $i;
                     }
                 }
+                Ideone::logError(Ideone::SCRAPE_ERROR, 'getLangID');
                 return Ideone::SCRAPE_ERROR;
             } else {
                 return $langs;
@@ -249,6 +326,7 @@
                     $langObj = json_decode($json, true);
                     return $langObj;
                 } else {
+                    Ideone::logError(Ideone::SCRAPE_ERROR, 'getLangObj');
                     return Ideone::SCRAPE_ERROR;
                 }
             } else {
@@ -271,6 +349,7 @@
                     if($response['error'] == null) {
                         return json_decode($response['html'], true);
                     } else {
+                        Ideone::logError(Ideone::CURL_ERROR, 'getTemplate');
                         return Ideone::CURL_ERROR;
                     }
                 } else {
@@ -296,6 +375,7 @@
                     if($response['error'] == null) {
                         return json_decode($response['html'], true);
                     } else {
+                        Ideone::logError(Ideone::CURL_ERROR, 'getSample');
                         return Ideone::CURL_ERROR;
                     }
                 } else {
@@ -350,6 +430,7 @@
                                 if($redirect_url != '') {
                                     $response['response']['redirect_url'] = $redirect_url;
                                 } else {
+                                    Ideone::logError(Ideone::REDIRECTION_ERROR, 'getID');
                                     return Ideone::REDIRECTION_ERROR;
                                 }
                             }
@@ -368,9 +449,11 @@
                                 return $id;
                             }
                         } else {
+                            Ideone::logError(Ideone::CURL_ERROR, 'getID');
                             return Ideone::CURL_ERROR;
                         }
                     } else {
+                        Ideone::logError(Ideone::SCRAPE_ERROR, 'getID');
                         return Ideone::SCRAPE_ERROR;
                     }
                 } else {
@@ -410,6 +493,7 @@
                     return $output;
                 }
             } else {
+                Ideone::logError(Ideone::CURL_ERROR, 'getOutput');
                 return Ideone::CURL_ERROR;
             }
         }
@@ -427,6 +511,7 @@
                     return Ideone::INVALID_SUBM_ID;
                 }
             } else {
+                Ideone::logError(Ideone::CURL_ERROR, 'getSourceCode');
                 return Ideone::CURL_ERROR;
             }
         }
@@ -453,6 +538,7 @@
                             $inputData['stdin'] = $stdinData->item(0)->nodeValue;
                         }
                     } else {
+                        Ideone::logError(Ideone::SCRAPE_ERROR, 'getInputData');
                         return Ideone::SCRAPE_ERROR;
                     }
 
@@ -463,6 +549,7 @@
                             $inputData['langVersion'] = $langTag->item(0)->attributes->item(1)->nodeValue;
                             $inputData['langId'] = Ideone::getLangID($inputData['langName'], $inputData['langVersion']);
                         } else {
+                            Ideone::logError(Ideone::SCRAPE_ERROR, 'getInputData');
                             return Ideone::SCRAPE_ERROR;
                         }
                     }
@@ -473,12 +560,14 @@
                         $dateObj = new DateTime($date, new DateTimeZone('CET'));
                         $inputData['timestamp'] = $dateObj->format('U');
                     } else {
+                        Ideone::logError(Ideone::SCRAPE_ERROR, 'getInputData');
                         return Ideone::SCRAPE_ERROR;
                     }
 
                     return $inputData;
                 }
             } else {
+                Ideone::logError(Ideone::CURL_ERROR, 'getInputData');
                 return Ideone::CURL_ERROR;
             }
         }

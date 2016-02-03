@@ -16,7 +16,6 @@ $RECYCLE.BIN/
 
 # Others
 .idea
-include/php/temp/
 
 # Windows shortcuts
 *.lnk
