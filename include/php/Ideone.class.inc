@@ -2,6 +2,7 @@
     require_once dirname(__FILE__) . '/curl.inc';
     $config = include(dirname(__FILE__) . '/config.inc');
     $scrapeInfo = include(dirname(__FILE__) . '/scrapeInfo.inc');
+    $langExtData = include(dirname(__FILE__) . '/langExtData.inc');
 
     /*
      * Utility function which is used for custom comparison while sorting
@@ -29,6 +30,8 @@
         const INVALID_TIME_INPUT = 600;
         const INVALID_LANG_ID = 601;
         const INVALID_SUBM_ID = 602;
+        const NO_TEMPLATE_AVAILABLE = 603;
+        const NO_SAMPLE_AVAILABLE = 604;
         const SOURCECODE_UNDEFINED = 700;
         const LANGID_UNDEFINED = 701;
 
@@ -172,7 +175,8 @@
                                         'id' => $id,
                                         'name' => $name,
                                         'version' => $version,
-                                        'popular' => $popular
+                                        'popular' => $popular,
+                                        'fileExt' => (isset($GLOBALS['langExtData'][$name]) ? $GLOBALS['langExtData'][$name] : '')
                                     );
                                     array_push($languages, $lang_desc);
                                     $flag = 1;
@@ -230,6 +234,75 @@
                 return Ideone::SCRAPE_ERROR;
             } else {
                 return $langs;
+            }
+        }
+
+        /*
+         * Get the langObj that contains template and sample ids of each language
+         */
+        private static function getLangObj() {
+            if(($result = Ideone::loadSession()) === true) {
+                $pattern = '#' . $GLOBALS['scrapeInfo']['langObjVar'] . '(.*?);\s*$#ms';
+                if(preg_match($pattern, Ideone::$mainDOM->saveHTML(), $matches)) {
+                    $json = $matches[1];
+                    $json = preg_replace('/([{,])(\s*)([A-Za-z0-9_\-]+?)\s*:/', '$1"$3":', $json);
+                    $langObj = json_decode($json, true);
+                    return $langObj;
+                } else {
+                    return Ideone::SCRAPE_ERROR;
+                }
+            } else {
+                return $result;
+            }
+        }
+
+        /*
+         * Get the template for the given language id
+         */
+        public static function getTemplate($langId) {
+            $langObj = Ideone::getLangObj();
+            if(is_array($langObj)) {
+                if(($check = Ideone::getOrigLangID($langId)) !== true) {
+                    return $check;
+                }
+                if($langObj[$langId][$GLOBALS['scrapeInfo']['langTemplateId']] != 0) {
+                    $link = $GLOBALS['scrapeInfo']['langTemplateLink'] . $langObj[$langId][$GLOBALS['scrapeInfo']['langTemplateId']];
+                    $response = curl($link);
+                    if($response['error'] == null) {
+                        return json_decode($response['html'], true);
+                    } else {
+                        return Ideone::CURL_ERROR;
+                    }
+                } else {
+                    return Ideone::NO_TEMPLATE_AVAILABLE;
+                }
+            } else {
+                return $langObj;
+            }
+        }
+
+        /*
+         * Get the sample code for the given language id
+         */
+        public static function getSample($langId) {
+            $langObj = Ideone::getLangObj();
+            if(is_array($langObj)) {
+                if(($check = Ideone::getOrigLangID($langId)) !== true) {
+                    return $check;
+                }
+                if($langObj[$langId][$GLOBALS['scrapeInfo']['langSampleId']] != 0) {
+                    $link = $GLOBALS['scrapeInfo']['langSampleLink'] . $langObj[$langId][$GLOBALS['scrapeInfo']['langSampleId']];
+                    $response = curl($link);
+                    if($response['error'] == null) {
+                        return json_decode($response['html'], true);
+                    } else {
+                        return Ideone::CURL_ERROR;
+                    }
+                } else {
+                    return Ideone::NO_SAMPLE_AVAILABLE;
+                }
+            } else {
+                return $langObj;
             }
         }
 

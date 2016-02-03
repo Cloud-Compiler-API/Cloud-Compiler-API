@@ -32,6 +32,9 @@
             if(isset($_GET['withPopular']) && $_GET['withPopular'] == 1) {
                 $temp['popular'] = $langs[$i]['popular'];
             }
+            if(isset($_GET['withFileExt']) && $_GET['withFileExt'] == 1) {
+                $temp['fileExt'] = $langs[$i]['fileExt'];
+            }
             array_push($response, $temp);
         }
 
