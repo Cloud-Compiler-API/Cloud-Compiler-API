@@ -22,6 +22,7 @@
         'langTemplateLink' => 'https://ideone.com/insert/template/',
         'langSampleId' => 'sample_sol_id',
         'langSampleLink' => 'https://ideone.com/insert/sample/',
+        'submIdLen' => 6,
         'loginSearch' => 'my account',
         'sessionID' => 'p1',
         'stdinID' => 'view_stdin',

@@ -496,33 +496,48 @@
         }
 
         /*
+         * Checks for the validity of submission id
+         */
+        private static function checkID($id) {
+            if(ctype_alnum($id) && (strlen($id) == $GLOBALS['scrapeInfo']['submIdLen'])) {
+                return true;
+            } else {
+                return Ideone::INVALID_SUBM_ID;
+            }
+        }
+
+        /*
          * Returns an associative array containing output details of the ID provided
          */
         public static function getOutput($id)
         {
-            $url = $GLOBALS['scrapeInfo']['ajaxSubLink1'] . $id . $GLOBALS['scrapeInfo']['ajaxSubLink2'];
-            $response = curl($url);
-            if($response['error'] == null) {
-                if($response['html'] == null) {
-                    return Ideone::INVALID_SUBM_ID;
+            if(($check = Ideone::checkID($id)) === true) {
+                $url = $GLOBALS['scrapeInfo']['ajaxSubLink1'] . $id . $GLOBALS['scrapeInfo']['ajaxSubLink2'];
+                $response = curl($url);
+                if($response['error'] == null) {
+                    if($response['html'] == null) {
+                        return Ideone::INVALID_SUBM_ID;
+                    } else {
+                        $obj = json_decode($response['html']);
+                        $output = array(
+                            'status' => $obj->status,
+                            'result' => $obj->result,
+                            'any_cmperr' => ($obj->any_cmperr ? true : false),
+                            'stdout' => $obj->stdout,
+                            'stderr' => $obj->stderr,
+                            'cmperr' => $obj->cmperr,
+                            'time' => $obj->time,
+                            'memory' => $obj->memory,
+                            'signal' => $obj->signal
+                        );
+                        return $output;
+                    }
                 } else {
-                    $obj = json_decode($response['html']);
-                    $output = array(
-                        'status' => $obj->status,
-                        'result' => $obj->result,
-                        'any_cmperr' => ($obj->any_cmperr ? true : false),
-                        'stdout' => $obj->stdout,
-                        'stderr' => $obj->stderr,
-                        'cmperr' => $obj->cmperr,
-                        'time' => $obj->time,
-                        'memory' => $obj->memory,
-                        'signal' => $obj->signal
-                    );
-                    return $output;
+                    Ideone::logError(Ideone::CURL_ERROR, 'getOutput');
+                    return Ideone::CURL_ERROR;
                 }
             } else {
-                Ideone::logError(Ideone::CURL_ERROR, 'getOutput');
-                return Ideone::CURL_ERROR;
+                return $check;
             }
         }
 
@@ -531,17 +546,21 @@
          */
         public static function getSourceCode($id)
         {
-            $url = $GLOBALS['scrapeInfo']['sourceCodeLink'] . $id;
-            $response = curl($url);
-            if($response['error'] == null) {
-                if($response['html'] != '') {
-                    return $response['html'];
+            if(($check = Ideone::checkID($id)) === true) {
+                $url = $GLOBALS['scrapeInfo']['sourceCodeLink'] . $id;
+                $response = curl($url);
+                if($response['error'] == null) {
+                    if($response['html'] != '') {
+                        return $response['html'];
+                    } else {
+                        return Ideone::INVALID_SUBM_ID;
+                    }
                 } else {
-                    return Ideone::INVALID_SUBM_ID;
+                    Ideone::logError(Ideone::CURL_ERROR, 'getSourceCode');
+                    return Ideone::CURL_ERROR;
                 }
             } else {
-                Ideone::logError(Ideone::CURL_ERROR, 'getSourceCode');
-                return Ideone::CURL_ERROR;
+                return $check;
             }
         }
 
@@ -550,55 +569,59 @@
          */
         public static function getInputData($id)
         {
-            $url = $GLOBALS['scrapeInfo']['mainLink'] . $id;
-            $response = curl($url);
-            if($response['error'] == null) {
-                if($response['response']['http_code'] == 302) {
-                    return Ideone::INVALID_SUBM_ID;
-                } else {
-                    $inputData = array();
-                    $tempDOM = new DOMDocument;
-                    @$tempDOM->loadHTML($response['html']);
-
-                    if(($stdinTag = $tempDOM->getElementById($GLOBALS['scrapeInfo']['stdinID'])) != null) {
-                        $stdinData = $stdinTag->getElementsByTagName('pre');
-                        if($stdinData->item(0)->nodeValue == $GLOBALS['scrapeInfo']['stdinEmpty']) {
-                            $inputData['stdin'] = '';
-                        } else {
-                            $inputData['stdin'] = $stdinData->item(0)->nodeValue;
-                        }
+            if(($check = Ideone::checkID($id)) === true) {
+                $url = $GLOBALS['scrapeInfo']['mainLink'] . $id;
+                $response = curl($url);
+                if($response['error'] == null) {
+                    if($response['response']['http_code'] == 302) {
+                        return Ideone::INVALID_SUBM_ID;
                     } else {
-                        Ideone::logError(Ideone::SCRAPE_ERROR, 'getInputData');
-                        return Ideone::SCRAPE_ERROR;
-                    }
+                        $inputData = array();
+                        $tempDOM = new DOMDocument;
+                        @$tempDOM->loadHTML($response['html']);
 
-                    if(($infoTag = $tempDOM->getElementById($GLOBALS['scrapeInfo']['infoID'])) != null) {
-                        $langTag = $infoTag->getElementsByTagName('strong');
-                        if($langTag->length == $GLOBALS['scrapeInfo']['strongTagLength']) {
-                            $inputData['langName'] = $langTag->item(0)->nodeValue;
-                            $inputData['langVersion'] = $langTag->item(0)->attributes->item(1)->nodeValue;
-                            $inputData['langId'] = Ideone::getLangID($inputData['langName'], $inputData['langVersion']);
+                        if(($stdinTag = $tempDOM->getElementById($GLOBALS['scrapeInfo']['stdinID'])) != null) {
+                            $stdinData = $stdinTag->getElementsByTagName('pre');
+                            if($stdinData->item(0)->nodeValue == $GLOBALS['scrapeInfo']['stdinEmpty']) {
+                                $inputData['stdin'] = '';
+                            } else {
+                                $inputData['stdin'] = $stdinData->item(0)->nodeValue;
+                            }
                         } else {
                             Ideone::logError(Ideone::SCRAPE_ERROR, 'getInputData');
                             return Ideone::SCRAPE_ERROR;
                         }
-                    }
 
-                    if(($dateTag = $tempDOM->getElementById($GLOBALS['scrapeInfo']['dateID'])) != null) {
-                        $dateSpan = $dateTag->getElementsByTagName('span');
-                        $date = substr($dateSpan->item(0)->attributes->item(1)->nodeValue, 0, -4);
-                        $dateObj = new DateTime($date, new DateTimeZone('CET'));
-                        $inputData['timestamp'] = $dateObj->format('U');
-                    } else {
-                        Ideone::logError(Ideone::SCRAPE_ERROR, 'getInputData');
-                        return Ideone::SCRAPE_ERROR;
-                    }
+                        if(($infoTag = $tempDOM->getElementById($GLOBALS['scrapeInfo']['infoID'])) != null) {
+                            $langTag = $infoTag->getElementsByTagName('strong');
+                            if($langTag->length == $GLOBALS['scrapeInfo']['strongTagLength']) {
+                                $inputData['langName'] = $langTag->item(0)->nodeValue;
+                                $inputData['langVersion'] = $langTag->item(0)->attributes->item(1)->nodeValue;
+                                $inputData['langId'] = Ideone::getLangID($inputData['langName'], $inputData['langVersion']);
+                            } else {
+                                Ideone::logError(Ideone::SCRAPE_ERROR, 'getInputData');
+                                return Ideone::SCRAPE_ERROR;
+                            }
+                        }
 
-                    return $inputData;
+                        if(($dateTag = $tempDOM->getElementById($GLOBALS['scrapeInfo']['dateID'])) != null) {
+                            $dateSpan = $dateTag->getElementsByTagName('span');
+                            $date = substr($dateSpan->item(0)->attributes->item(1)->nodeValue, 0, -4);
+                            $dateObj = new DateTime($date, new DateTimeZone('CET'));
+                            $inputData['timestamp'] = $dateObj->format('U');
+                        } else {
+                            Ideone::logError(Ideone::SCRAPE_ERROR, 'getInputData');
+                            return Ideone::SCRAPE_ERROR;
+                        }
+
+                        return $inputData;
+                    }
+                } else {
+                    Ideone::logError(Ideone::CURL_ERROR, 'getInputData');
+                    return Ideone::CURL_ERROR;
                 }
             } else {
-                Ideone::logError(Ideone::CURL_ERROR, 'getInputData');
-                return Ideone::CURL_ERROR;
+                return $check;
             }
         }
     }

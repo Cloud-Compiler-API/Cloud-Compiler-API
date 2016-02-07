@@ -7,5 +7,6 @@
         'password' => 'cloudideapiwithideone',
         'tempLocation' => __DIR__ . '/temp',
         'expiryTime' => '1',    // In days
-        'proxy' => ''
+        'proxy' => '',
+        'serverRoot' => '/Cloud-Compiler-API'
     );
