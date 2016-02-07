@@ -7,8 +7,8 @@
     $langExtData = include(dirname(__FILE__) . '/langExtData.inc');
 
     spl_autoload_register(function($className) {
-        if (strpos($className, 'Phroute\\') === 0) {
-            $dir = '/' . substr(str_replace('\\', '/', $className), 8);
+        if (strpos($className, 'Klein\\') === 0) {
+            $dir = '/' . str_replace('\\', '/', $className);
             require_once __DIR__ . $dir . '.php';
         } else {
             $dir = '/' . $className . '.class';

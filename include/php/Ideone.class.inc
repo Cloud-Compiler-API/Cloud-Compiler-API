@@ -1,8 +1,8 @@
 <?php
-    require_once dirname(__FILE__) . '/curl.inc';
-    $config = include(dirname(__FILE__) . '/config.inc');
-    $scrapeInfo = include(dirname(__FILE__) . '/scrapeInfo.inc');
-    $langExtData = include(dirname(__FILE__) . '/langExtData.inc');
+    require_once __DIR__ . '/curl.inc';
+    $config = include(__DIR__ . '/config.inc');
+    $scrapeInfo = include(__DIR__ . '/scrapeInfo.inc');
+    $langExtData = include(__DIR__ . '/langExtData.inc');
 
     /*
      * Utility function which is used for custom comparison while sorting

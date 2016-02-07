@@ -1,7 +1,13 @@
 <?php
     require_once __DIR__ . '/include/php/autoload.php';
-    use Phroute\Phroute\RouteCollector;
-    $router = new RouteCollector();
+
+    $klein = new \Klein\Klein();
+
+    $klein->respond('GET', '/Cloud-Compiler-API/hello-world', function () {
+        return 'Hello World!';
+    });
+
+    $klein->dispatch();
 ?>
 <!--<!DOCTYPE html>
 <html>

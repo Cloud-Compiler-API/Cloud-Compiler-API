@@ -5,7 +5,7 @@
     return array(
         'username' => 'ideoneapi',
         'password' => 'cloudideapiwithideone',
-        'tempLocation' => dirname(__FILE__) . '/temp',
+        'tempLocation' => __DIR__ . '/temp',
         'expiryTime' => '1',    // In days
         'proxy' => ''
     );

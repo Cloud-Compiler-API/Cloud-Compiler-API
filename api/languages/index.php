@@ -1,5 +1,5 @@
 <?php
-    require_once dirname(__FILE__) . '/../../include/php/Ideone.class.inc';
+    require_once __DIR__ . '/../../include/php/Ideone.class.inc';
 
     /*
      * Utility function which strips escaped slashes deeply

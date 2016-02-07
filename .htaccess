@@ -1,0 +1,20 @@
+<IfModule mod_rewrite.c>
+    # Set Options #
+    Options +FollowSymLinks
+    Options -MultiViews
+
+    # Turn on Rewrite Engine #
+    RewriteEngine On
+
+    # Set Base URL for rewrite #
+    #RewriteBase /Cloud-Compiler-API/
+
+    # Rewrite only if it is a non existing file #
+    RewriteCond %{REQUEST_FILENAME} !-f
+
+    # Rewrite only if it is a non existing directory #
+    #RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Rewrite to index.php #
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
