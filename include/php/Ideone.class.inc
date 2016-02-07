@@ -7,14 +7,16 @@
     /*
      * Utility function which is used for custom comparison while sorting
      */
-    function customcmp($arr1, $arr2) {
+    function customcmp($arr1, $arr2)
+    {
         return strnatcasecmp($arr1['name'], $arr2['name']);
     }
 
     /*
      * Ideone API Class
      */
-    class Ideone {
+    class Ideone
+    {
         private static $mainDOM;        // Contains DOM object of the main page
         private static $expiryTime;     // Contains the expiry time of mainDOM
         private static $sessionAlive;   // Tells whether mainDOM's session is alive or not
@@ -38,7 +40,8 @@
         /*
          * Function to reset the cache data stored in temp folder
          */
-        private static function resetData() {
+        private static function resetData()
+        {
             Ideone::$mainDOM = null;
             Ideone::$expiryTime = null;
             Ideone::$sessionAlive = null;
@@ -51,14 +54,16 @@
         /*
          * Cleans the error log which is stored in temp folder
          */
-        public static function cleanErrorLog() {
+        public static function cleanErrorLog()
+        {
             file_put_contents($GLOBALS['config']['tempLocation'] . '/errorLog.txt', '');
         }
 
         /*
          * Cleans whole temp folder
          */
-        public static function cleanAll() {
+        public static function cleanAll()
+        {
             Ideone::resetData();
             Ideone::cleanErrorLog();
         }
@@ -66,7 +71,8 @@
         /*
          * Gives an associative array of all errors that are logged
          */
-        public static function getErrorLog() {
+        public static function getErrorLog()
+        {
             $result = array();
             $logFile = file_get_contents($GLOBALS['config']['tempLocation'] . '/errorLog.txt');
             $errors = explode(' $$ ', $logFile);
@@ -87,7 +93,8 @@
         /*
          * Logs error to a file for debugging purposes
          */
-        private static function logError($error, $func) {
+        private static function logError($error, $func)
+        {
             $errorData = array();
             switch($error) {
                 case Ideone::UNKNOWN_ERROR:
@@ -128,7 +135,8 @@
         /*
          * Creates a new session with an expiry as in config file
          */
-        private static function newSession() {
+        private static function newSession()
+        {
             $response = curl($GLOBALS['scrapeInfo']['mainLink'], null, true);
             if($response['error'] == null) {
                 Ideone::$mainDOM = new DOMDocument;
@@ -151,7 +159,8 @@
         /*
          * Loads the session from cache if it is not expired
          */
-        private static function loadSession() {
+        private static function loadSession()
+        {
             if(($expiryTime = file_get_contents($GLOBALS['config']['tempLocation'] . '/expiry.txt')) != '') {
                 $currentTime = time();
                 if($currentTime < $expiryTime) {    //Checking if the session expired or not
@@ -180,7 +189,8 @@
         /*
          * Cleanly starts new session.
          */
-        public static function refreshSession() {
+        public static function refreshSession()
+        {
             Ideone::resetData();
             return Ideone::newSession();
         }
@@ -188,7 +198,8 @@
         /*
          * Check whether the session is logged in one or not
          */
-        private static function checkLogin() {
+        private static function checkLogin()
+        {
             if(($result = Ideone::loadSession()) === true) {
                 if(($nav = Ideone::$mainDOM->getElementById($GLOBALS['scrapeInfo']['loginNavID'])) != null) {
                     if(strpos($nav->nodeValue, $GLOBALS['scrapeInfo']['loginSearch'])) {
@@ -208,7 +219,8 @@
         /*
          * Login and create new session if not logged in
          */
-        private static function login() {
+        private static function login()
+        {
             $result = Ideone::checkLogin();
             if($result == false) {
                 $data = array(
@@ -237,7 +249,8 @@
         /*
          * Returns an associative array containing details about languages
          */
-        public static function getLanguages() {
+        public static function getLanguages()
+        {
             if(($result = Ideone::loadSession()) === true) {
                 if(($menu = Ideone::$mainDOM->getElementById($GLOBALS['scrapeInfo']['langDropDownMenuID'])) != null) {
                     $lists = $menu->getElementsByTagName('ul');
@@ -287,7 +300,8 @@
         /*
          * Updates the given id with original language ID of Ideone
          */
-        private static function getOrigLangID(&$id) {
+        private static function getOrigLangID(&$id)
+        {
             $result = Ideone::getLanguages();
             if(is_array($result)) {
                 $minID = 0;
@@ -306,7 +320,8 @@
         /*
          * Gives language ID with the input of language name and version
          */
-        private static function getLangID($langName, $langVersion) {
+        private static function getLangID($langName, $langVersion)
+        {
             $langs = Ideone::getLanguages();
             if(is_array($langs)) {
                 $n = count($langs);
@@ -325,7 +340,8 @@
         /*
          * Get the langObj that contains template and sample ids of each language
          */
-        private static function getLangObj() {
+        private static function getLangObj()
+        {
             if(($result = Ideone::loadSession()) === true) {
                 $pattern = '#' . $GLOBALS['scrapeInfo']['langObjVar'] . '(.*?);\s*$#ms';
                 if(preg_match($pattern, Ideone::$mainDOM->saveHTML(), $matches)) {
@@ -345,7 +361,8 @@
         /*
          * Get the template for the given language id
          */
-        public static function getTemplate($langId) {
+        public static function getTemplate($langId)
+        {
             $langObj = Ideone::getLangObj();
             if(is_array($langObj)) {
                 if(($check = Ideone::getOrigLangID($langId)) !== true) {
@@ -371,7 +388,8 @@
         /*
          * Get the sample code for the given language id
          */
-        public static function getSample($langId) {
+        public static function getSample($langId)
+        {
             $langObj = Ideone::getLangObj();
             if(is_array($langObj)) {
                 if(($check = Ideone::getOrigLangID($langId)) !== true) {
@@ -397,7 +415,8 @@
         /*
          * Returns ID after submission of source code
          */
-        public static function getID($code, $lang, $stdin = '', $time = 0) {
+        public static function getID($code, $lang, $stdin = '', $time = 0)
+        {
             $origLang = $lang;
             if(!($time == 0 || $time == 1)) {
                 return Ideone::INVALID_TIME_INPUT;
@@ -479,7 +498,8 @@
         /*
          * Returns an associative array containing output details of the ID provided
          */
-        public static function getOutput($id) {
+        public static function getOutput($id)
+        {
             $url = $GLOBALS['scrapeInfo']['ajaxSubLink1'] . $id . $GLOBALS['scrapeInfo']['ajaxSubLink2'];
             $response = curl($url);
             if($response['error'] == null) {
@@ -509,7 +529,8 @@
         /*
          * Returns the source code with the input of id
          */
-        public static function getSourceCode($id) {
+        public static function getSourceCode($id)
+        {
             $url = $GLOBALS['scrapeInfo']['sourceCodeLink'] . $id;
             $response = curl($url);
             if($response['error'] == null) {
@@ -527,7 +548,8 @@
         /*
          * Returns associative array containing input data with the input of id
          */
-        public static function getInputData($id) {
+        public static function getInputData($id)
+        {
             $url = $GLOBALS['scrapeInfo']['mainLink'] . $id;
             $response = curl($url);
             if($response['error'] == null) {
