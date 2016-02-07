@@ -1,4 +1,9 @@
-<!DOCTYPE html>
+<?php
+    require_once __DIR__ . '/include/php/autoload.php';
+    use Phroute\Phroute\RouteCollector;
+    $router = new RouteCollector();
+?>
+<!--<!DOCTYPE html>
 <html>
 <head>
     <title>
@@ -19,4 +24,4 @@
         <input type="submit" value="Submit">
     </form>
 </body>
-</html>
+</html>-->
