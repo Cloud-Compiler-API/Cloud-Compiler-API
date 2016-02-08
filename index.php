@@ -4,6 +4,14 @@
 
     $klein = new \Klein\Klein();
 
+    $klein->respond('GET', $GLOBALS['config']['serverRoot'], function () {
+        return "Welcome to the Cloud Compiler API.";
+    });
+
+    $klein->respond('GET', $GLOBALS['config']['serverRoot'] . 'docs/', function () {
+        return file_get_contents(__DIR__ . '/docs/index.html');
+    });
+
     $klein->respond('GET', $GLOBALS['config']['serverRoot'] . 'api/languages[/]?', function ($request, $response) {
         $responseData = \API\Languages\Response();
         $response->json($responseData);
@@ -34,8 +42,28 @@
         $response->json($responseData);
     });
 
-    $klein->respond('GET', $GLOBALS['config']['serverRoot'] . 'docs/', function () {
-        return file_get_contents(__DIR__ . '/docs/index.html');
+    $klein->onHttpError(function ($code, $router) {
+        switch ($code) {
+            case 404:
+                $router->response()->body(
+                    'Unable to find the requested page. Please verify the url.'
+                );
+                break;
+            case 405:
+                $router->response()->body(
+                    'Requested method is not allowed.'
+                );
+                break;
+            case 500:
+                $router->response()->body(
+                    'Internal server error occurred. Please try again.'
+                );
+                break;
+            default:
+                $router->response()->body(
+                    'Something wrong happened and caused a '. $code . ' error.'
+                );
+        }
     });
 
     $klein->dispatch();
