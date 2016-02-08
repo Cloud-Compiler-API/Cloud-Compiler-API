@@ -1,5 +1,5 @@
 <?php
-    $config = include(dirname(__FILE__) . '/config.inc');
+    $config = include(__DIR__ . '/config.inc');
 
     /*
      * cURL function which simplifies page fetching operations

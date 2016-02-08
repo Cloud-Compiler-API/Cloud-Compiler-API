@@ -15,6 +15,7 @@
         $_GET = stripslashes_deep($_GET);
         $_POST = stripslashes_deep($_POST);
         $_COOKIE = stripslashes_deep($_COOKIE);
+        $_REQUEST = stripslashes_deep($_REQUEST);
     }
 
     /*

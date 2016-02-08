@@ -2,9 +2,9 @@
     /*
      * Including global variables
      */
-    $config = include(dirname(__FILE__) . '/config.inc');
-    $scrapeInfo = include(dirname(__FILE__) . '/scrapeInfo.inc');
-    $langExtData = include(dirname(__FILE__) . '/langExtData.inc');
+    $config = include(__DIR__ . '/config.inc');
+    $scrapeInfo = include(__DIR__ . '/scrapeInfo.inc');
+    $langExtData = include(__DIR__ . '/langExtData.inc');
 
     spl_autoload_register(function($className) {
         if(strpos($className, 'Klein\\') === 0) {
