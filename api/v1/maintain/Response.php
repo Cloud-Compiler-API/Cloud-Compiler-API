@@ -6,14 +6,16 @@
     function Response() {
         $langs = \Ideone::getLanguages();
         if(is_array($langs)) {
-            $response['langUpdate'] = false;
+            $response['code'] = 200;
+            $response['body']['langUpdate'] = false;
             foreach($langs as $lang) {
                 if($lang['fileExt'] == '') {
-                    $response['langUpdate'] = true;
+                    $response['body']['langUpdate'] = true;
                     break;
                 }
             }
         } else {
+            $response['code'] = 500;
             $errorCode = $langs;
             if($errorCode == \Ideone::CURL_ERROR || $errorCode == \Ideone::SCRAPE_ERROR || $errorCode == \Ideone::LOGIN_ERROR || $errorCode == \Ideone::REDIRECTION_ERROR) {
                 $error = 'SYSTEM_ERROR';
@@ -23,7 +25,7 @@
                 $errorCode = \Ideone::UNKNOWN_ERROR;
                 $errorDesc = 'Some unknown error occurred, Please try again.';
             }
-            $response['langUpdate'] = array(
+            $response['body']['langUpdate'] = array(
                 'error' => $error,
                 'errorCode' => $errorCode,
                 'errorDesc' => $errorDesc
@@ -38,7 +40,7 @@
             \Ideone::cleanAll();
         }
 
-        $response['errorLog'] = \Ideone::getErrorLog();
+        $response['body']['errorLog'] = \Ideone::getErrorLog();
 
         return $response;
     }

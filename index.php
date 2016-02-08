@@ -14,36 +14,45 @@
 
     $klein->respond(array('GET', 'POST'), $GLOBALS['config']['serverRoot'] . 'api/languages[/]?', function ($request, $response) {
         $responseData = \API\Languages\Response();
-        $response->json($responseData);
+        $response->code($responseData['code']);
+        $response->json($responseData['body']);
     });
 
     $klein->respond(array('GET', 'POST'), $GLOBALS['config']['serverRoot'] . 'api/languages/template/[i:id][/]?', function ($request, $response) {
         $responseData = \API\Languages\Template\Response($request->id);
-        $response->json($responseData);
+        $response->code($responseData['code']);
+        $response->json($responseData['body']);
     });
 
     $klein->respond(array('GET', 'POST'), $GLOBALS['config']['serverRoot'] . 'api/languages/sample/[i:id][/]?', function ($request, $response) {
         $responseData = \API\Languages\Sample\Response($request->id);
-        $response->json($responseData);
+        $response->code($responseData['code']);
+        $response->json($responseData['body']);
     });
 
     $klein->respond(array('GET', 'POST'), $GLOBALS['config']['serverRoot'] . 'api/maintain[/]?', function ($request, $response) {
         $responseData = \API\Maintain\Response();
-        $response->json($responseData);
+        $response->code($responseData['code']);
+        $response->json($responseData['body']);
     });
 
     $klein->respond(array('GET', 'POST'), $GLOBALS['config']['serverRoot'] . 'api/submissions/[a:id][/]?', function ($request, $response) {
         $responseData = \API\Submissions\Response($request->id);
-        $response->json($responseData);
+        $response->code($responseData['code']);
+        $response->json($responseData['body']);
     });
 
     $klein->respond(array('GET', 'POST'), $GLOBALS['config']['serverRoot'] . 'api/submissions[/]?', function ($request, $response) {
         $responseData = \API\Submissions\Response();
-        $response->json($responseData);
+        $response->code($responseData['code']);
+        $response->json($responseData['body']);
     });
 
     $klein->onHttpError(function ($code, $router) {
         switch ($code) {
+            case 400:
+                // Leave no message as a json file will be returned
+                break;
             case 404:
                 $router->response()->body(
                     'Unable to find the requested page. Please verify the url.'
@@ -55,9 +64,7 @@
                 );
                 break;
             case 500:
-                $router->response()->body(
-                    'Internal server error occurred. Please try again.'
-                );
+                // Leave no message as a json file will be returned
                 break;
             default:
                 $router->response()->body(
