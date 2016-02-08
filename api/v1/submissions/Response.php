@@ -8,7 +8,7 @@
             $output = \Ideone::getOutput($id);
             if(is_array($output)) {
                 $response = $output;
-                if(isset($_GET['withSource']) && $_GET['withSource'] == 1) {
+                if(isset($_REQUEST['withSource']) && $_REQUEST['withSource'] == 1) {
                     $sourceCode = \Ideone::getSourceCode($id);
                     if(is_string($sourceCode)) {
                         $response['sourceCode'] = $sourceCode;
@@ -32,18 +32,18 @@
                         );
                     }
                 }
-                if(isset($_GET['withInput']) || isset($_GET['withLang']) || isset($_GET['withTimestamp'])) {
+                if(isset($_REQUEST['withInput']) || isset($_REQUEST['withLang']) || isset($_REQUEST['withTimestamp'])) {
                     $input = \Ideone::getInputData($id);
                     if(is_array($input)) {
-                        if(isset($_GET['withInput']) && $_GET['withInput'] == 1) {
+                        if(isset($_REQUEST['withInput']) && $_REQUEST['withInput'] == 1) {
                             $response['stdin'] = $input['stdin'];
                         }
-                        if(isset($_GET['withLang']) && $_GET['withLang'] == 1) {
+                        if(isset($_REQUEST['withLang']) && $_REQUEST['withLang'] == 1) {
                             $response['langId'] = $input['langId'];
                             $response['langName'] = $input['langName'];
                             $response['langVersion'] = $input['langVersion'];
                         }
-                        if(isset($_GET['withTimestamp']) && $_GET['withTimestamp'] == 1) {
+                        if(isset($_REQUEST['withTimestamp']) && $_REQUEST['withTimestamp'] == 1) {
                             $response['timestamp'] = $input['timestamp'];
                         }
                     } else {
@@ -86,16 +86,16 @@
                 );
             }
         } else {
-            if(isset($_POST['sourceCode']) && isset($_POST['langId'])) {
-                $sourceCode = $_POST['sourceCode'];
-                $langId = $_POST['langId'];
-                if(isset($_POST['stdin'])) {
-                    $stdin = $_POST['stdin'];
+            if(isset($_REQUEST['sourceCode']) && isset($_REQUEST['langId'])) {
+                $sourceCode = $_REQUEST['sourceCode'];
+                $langId = $_REQUEST['langId'];
+                if(isset($_REQUEST['stdin'])) {
+                    $stdin = $_REQUEST['stdin'];
                 } else {
                     $stdin = '';
                 }
-                if(isset($_POST['timeLimit'])) {
-                    $time = $_POST['timeLimit'];
+                if(isset($_REQUEST['timeLimit'])) {
+                    $time = $_REQUEST['timeLimit'];
                 } else {
                     $time = 0;
                 }
@@ -127,7 +127,7 @@
                     );
                 }
             } else {
-                if(isset($_POST['sourceCode'])) {
+                if(isset($_REQUEST['sourceCode'])) {
                     $response = array(
                         'error' => 'LANGID_UNDEFINED',
                         'errorCode' => \Ideone::LANGID_UNDEFINED,

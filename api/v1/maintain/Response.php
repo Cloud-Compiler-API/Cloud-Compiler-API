@@ -30,11 +30,11 @@
             );
         }
 
-        if(isset($_GET['cleanLog']) && $_GET['cleanLog'] == 1) {
+        if(isset($_REQUEST['cleanLog']) && $_REQUEST['cleanLog'] == 1) {
             \Ideone::cleanErrorLog();
         }
 
-        if(isset($_GET['cleanAll']) && $_GET['cleanAll'] == 1) {
+        if(isset($_REQUEST['cleanAll']) && $_REQUEST['cleanAll'] == 1) {
             \Ideone::cleanAll();
         }
 
