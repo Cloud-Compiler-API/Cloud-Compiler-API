@@ -1,7 +1,7 @@
 <?php
     namespace API\Maintain;
 
-    require_once __DIR__ . '/../../include/php/autoload.php';
+    require_once __DIR__ . '/../../../include/php/autoload.php';
 
     function Response() {
         $langs = \Ideone::getLanguages();

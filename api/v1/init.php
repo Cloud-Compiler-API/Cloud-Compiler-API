@@ -1,5 +1,5 @@
 <?php
-    require_once __DIR__ . '/../include/php/autoload.php';
+    require_once __DIR__ . '/../../include/php/autoload.php';
 
     /*
      * Utility function which strips escaped slashes deeply

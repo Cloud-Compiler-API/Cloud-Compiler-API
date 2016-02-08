@@ -1,5 +1,6 @@
 <?php
     require_once __DIR__ . '/curl.inc';
+
     $config = include(__DIR__ . '/config.inc');
     $scrapeInfo = include(__DIR__ . '/scrapeInfo.inc');
     $langExtData = include(__DIR__ . '/langExtData.inc');

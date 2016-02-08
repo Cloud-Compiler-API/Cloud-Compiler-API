@@ -1,7 +1,7 @@
 <?php
     namespace API\Submissions;
 
-    require_once __DIR__ . '/../../include/php/autoload.php';
+    require_once __DIR__ . '/../../../include/php/autoload.php';
 
     function Response($id = null) {
         if($id != null) {
