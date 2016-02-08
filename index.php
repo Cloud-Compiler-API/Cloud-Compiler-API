@@ -5,7 +5,7 @@
     $klein = new \Klein\Klein();
 
     $klein->respond('GET', $GLOBALS['config']['serverRoot'], function () {
-        return "Welcome to the Cloud Compiler API.";
+        return "<h2>Welcome to the Cloud Compiler API</h2><p>Check out the documentation for the API <a href='docs/'>here</a></p>";
     });
 
     $klein->respond('GET', $GLOBALS['config']['serverRoot'] . 'docs/', function () {
