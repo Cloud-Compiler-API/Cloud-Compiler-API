@@ -32,11 +32,11 @@
             );
         }
 
-        if(isset($_REQUEST['cleanLog']) && $_REQUEST['cleanLog'] == 1) {
+        if(isset($GLOBALS['PARAMETERS']['cleanLog']) && $GLOBALS['PARAMETERS']['cleanLog'] == 1) {
             \Ideone::cleanErrorLog();
         }
 
-        if(isset($_REQUEST['cleanAll']) && $_REQUEST['cleanAll'] == 1) {
+        if(isset($GLOBALS['PARAMETERS']['cleanAll']) && $GLOBALS['PARAMETERS']['cleanAll'] == 1) {
             \Ideone::cleanAll();
         }
 

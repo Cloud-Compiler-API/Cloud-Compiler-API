@@ -19,6 +19,26 @@
     }
 
     /*
+     * Code snippet to accept json input too.
+     * All the input parameters either GET or POST or JSON will be stored in $PARAMETERS.
+     */
+    $PARAMETERS = array(); //use this variable for all input parameters
+    $raw_input = file_get_contents("php://input");
+    // If there is json file input include all those params in $PARAMETERS
+    if(isset($_SERVER['CONTENT_TYPE']) && (strcmp($_SERVER['CONTENT_TYPE'], "application/json") == 0)) {
+        $input_params = json_decode($raw_input);
+        if($input_params) {
+            foreach($input_params as $param_name => $param_value) {
+                $PARAMETERS[$param_name] = $param_value;
+            }
+        }
+    }
+    // Copy all the $_REQUEST variables into $PARAMETERS
+    foreach($_REQUEST as $param_name => $param_value) {
+        $PARAMETERS[$param_name] = $param_value;
+    }
+
+    /*
      * Including all files of API namespace
      */
     require_once __DIR__ . '/languages/Response.php';

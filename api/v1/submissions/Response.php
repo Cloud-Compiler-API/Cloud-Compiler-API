@@ -9,7 +9,7 @@
             if(is_array($output)) {
                 $response['code'] = 200;
                 $response['body'] = $output;
-                if(isset($_REQUEST['withSource']) && $_REQUEST['withSource'] == 1) {
+                if(isset($GLOBALS['PARAMETERS']['withSource']) && $GLOBALS['PARAMETERS']['withSource'] == 1) {
                     $sourceCode = \Ideone::getSourceCode($id);
                     if(is_string($sourceCode)) {
                         $response['body']['sourceCode'] = $sourceCode;
@@ -36,18 +36,18 @@
                         );
                     }
                 }
-                if(isset($_REQUEST['withInput']) || isset($_REQUEST['withLang']) || isset($_REQUEST['withTimestamp'])) {
+                if(isset($GLOBALS['PARAMETERS']['withInput']) || isset($GLOBALS['PARAMETERS']['withLang']) || isset($GLOBALS['PARAMETERS']['withTimestamp'])) {
                     $input = \Ideone::getInputData($id);
                     if(is_array($input)) {
-                        if(isset($_REQUEST['withInput']) && $_REQUEST['withInput'] == 1) {
+                        if(isset($GLOBALS['PARAMETERS']['withInput']) && $GLOBALS['PARAMETERS']['withInput'] == 1) {
                             $response['body']['stdin'] = $input['stdin'];
                         }
-                        if(isset($_REQUEST['withLang']) && $_REQUEST['withLang'] == 1) {
+                        if(isset($GLOBALS['PARAMETERS']['withLang']) && $GLOBALS['PARAMETERS']['withLang'] == 1) {
                             $response['body']['langId'] = $input['langId'];
                             $response['body']['langName'] = $input['langName'];
                             $response['body']['langVersion'] = $input['langVersion'];
                         }
-                        if(isset($_REQUEST['withTimestamp']) && $_REQUEST['withTimestamp'] == 1) {
+                        if(isset($GLOBALS['PARAMETERS']['withTimestamp']) && $GLOBALS['PARAMETERS']['withTimestamp'] == 1) {
                             $response['body']['timestamp'] = $input['timestamp'];
                         }
                     } else {
@@ -96,16 +96,16 @@
                 );
             }
         } else {
-            if(isset($_REQUEST['sourceCode']) && isset($_REQUEST['langId'])) {
-                $sourceCode = $_REQUEST['sourceCode'];
-                $langId = $_REQUEST['langId'];
-                if(isset($_REQUEST['stdin'])) {
-                    $stdin = $_REQUEST['stdin'];
+            if(isset($GLOBALS['PARAMETERS']['sourceCode']) && isset($GLOBALS['PARAMETERS']['langId'])) {
+                $sourceCode = $GLOBALS['PARAMETERS']['sourceCode'];
+                $langId = $GLOBALS['PARAMETERS']['langId'];
+                if(isset($GLOBALS['PARAMETERS']['stdin'])) {
+                    $stdin = $GLOBALS['PARAMETERS']['stdin'];
                 } else {
                     $stdin = '';
                 }
-                if(isset($_REQUEST['timeLimit'])) {
-                    $time = $_REQUEST['timeLimit'];
+                if(isset($GLOBALS['PARAMETERS']['timeLimit'])) {
+                    $time = $GLOBALS['PARAMETERS']['timeLimit'];
                 } else {
                     $time = 0;
                 }
@@ -142,7 +142,7 @@
                     );
                 }
             } else {
-                if(isset($_REQUEST['sourceCode'])) {
+                if(isset($GLOBALS['PARAMETERS']['sourceCode'])) {
                     $response['code'] = 400;
                     $response['body'] = array(
                         'error' => 'LANGID_UNDEFINED',

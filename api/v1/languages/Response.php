@@ -15,19 +15,19 @@
                     'id' => $i,
                     'name' => $langs[$i]['name']
                 );
-                if(isset($_REQUEST['withVersion']) && $_REQUEST['withVersion'] == 1) {
+                if(isset($GLOBALS['PARAMETERS']['withVersion']) && $GLOBALS['PARAMETERS']['withVersion'] == 1) {
                     $temp['version'] = $langs[$i]['version'];
                 }
-                if(isset($_REQUEST['withPopular']) && $_REQUEST['withPopular'] == 1) {
+                if(isset($GLOBALS['PARAMETERS']['withPopular']) && $GLOBALS['PARAMETERS']['withPopular'] == 1) {
                     $temp['popular'] = $langs[$i]['popular'];
                 }
-                if(isset($_REQUEST['withFileExt']) && $_REQUEST['withFileExt'] == 1) {
+                if(isset($GLOBALS['PARAMETERS']['withFileExt']) && $GLOBALS['PARAMETERS']['withFileExt'] == 1) {
                     $temp['fileExt'] = $langs[$i]['fileExt'];
                 }
                 array_push($response['body'], $temp);
             }
 
-            if(isset($_REQUEST['onlyPopular']) && $_REQUEST['onlyPopular'] == 1 && !isset($_REQUEST['onlyUnpopular'])) {
+            if(isset($GLOBALS['PARAMETERS']['onlyPopular']) && $GLOBALS['PARAMETERS']['onlyPopular'] == 1 && !isset($GLOBALS['PARAMETERS']['onlyUnpopular'])) {
                 for ($i = 0; $i < $n; $i++) {
                     if(!$langs[$i]['popular']) {
                         unset($response['body'][$i]);
@@ -35,7 +35,7 @@
                 }
                 $response['body'] = array_values($response['body']);
             }
-            if(isset($_REQUEST['onlyUnpopular']) && $_REQUEST['onlyUnpopular'] == 1 && !isset($_REQUEST['onlyPopular'])) {
+            if(isset($GLOBALS['PARAMETERS']['onlyUnpopular']) && $GLOBALS['PARAMETERS']['onlyUnpopular'] == 1 && !isset($GLOBALS['PARAMETERS']['onlyPopular'])) {
                 for ($i = 0; $i < $n; $i++) {
                     if($langs[$i]['popular']) {
                         unset($response['body'][$i]);
