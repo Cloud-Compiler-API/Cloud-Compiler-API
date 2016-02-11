@@ -118,59 +118,44 @@
       <div class="content">
         <h1 id="introduction">Introduction</h1>
 
-<p>Cloud Compiler API is the only free API which compiles the source code provided by the user in the cloud and returns the output. Currently this API supports 70+ programming languages.</p>
+<p><strong>Cloud Compiler API</strong> is the only free API which compiles the source code provided by the user in the cloud and returns the output. Currently this API supports <strong>70+</strong> programming languages.</p>
 
-<p>No authorization key is required to access this API. Anyone can access the API at the endpoints as given in the documentation directly.</p>
+<p>No authorization key is required to access this API. Anyone can directly access the API at the endpoints as given in the documentation.</p>
 
 <p>Go through the documentation given below to get familiar with the API. If you have any issues or trouble using this API, please report it to us.</p>
 
-<h1 id="authentication">Authentication</h1>
+<p>All URLs referenced in the documentation have the following base:</p>
 
-<blockquote>
-<p>To authorize, use this code:</p>
-</blockquote>
-<pre class="highlight ruby"><code><span class="nb">require</span> <span class="s1">'kittn'</span>
-
-<span class="n">api</span> <span class="o">=</span> <span class="no">Kittn</span><span class="o">::</span><span class="no">APIClient</span><span class="p">.</span><span class="nf">authorize!</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">)</span>
-</code></pre>
-<pre class="highlight python"><code><span class="kn">import</span> <span class="nn">kittn</span>
-
-<span class="n">api</span> <span class="o">=</span> <span class="n">kittn</span><span class="o">.</span><span class="n">authorize</span><span class="p">(</span><span class="s">'meowmeowmeow'</span><span class="p">)</span>
-</code></pre>
-<pre class="highlight shell"><code><span class="c"># With shell, you can just pass the correct header with each request</span>
-curl <span class="s2">"api_endpoint_here"</span>
-  -H <span class="s2">"Authorization: meowmeowmeow"</span>
-</code></pre>
-
-<blockquote>
-<p>Make sure to replace <code class="prettyprint">meowmeowmeow</code> with your API key.</p>
-</blockquote>
-
-<p>Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our <a href="http://example.com/developers">developer portal</a>.</p>
-
-<p>Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:</p>
-
-<p><code class="prettyprint">Authorization: meowmeowmeow</code></p>
-
-<aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
+<aside class="notice" style="text-align: center; font-size: 15px; font-weight: 600; margin-bottom: 0;">
+  http://cloudcompiler.esy.es/api/
 </aside>
 
-<h1 id="kittens">Kittens</h1>
+<h2 id="functionality">Functionality</h2>
 
-<h2 id="get-all-kittens">Get All Kittens</h2>
-<pre class="highlight ruby"><code><span class="nb">require</span> <span class="s1">'kittn'</span>
+<p>Cloud Compiler API allows you to do the following actions:</p>
 
-<span class="n">api</span> <span class="o">=</span> <span class="no">Kittn</span><span class="o">::</span><span class="no">APIClient</span><span class="p">.</span><span class="nf">authorize!</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="p">.</span><span class="nf">kittens</span><span class="p">.</span><span class="nf">get</span>
-</code></pre>
-<pre class="highlight python"><code><span class="kn">import</span> <span class="nn">kittn</span>
+<ul>
+<li><p>Upload a source code;</p></li>
+<li><p>Run the program with input data on server side in more than 70 programming languages;</p></li>
+<li><p>And download results of the execution (output, standard error, compilation information, execution time, memory usage, etc.).</p></li>
+</ul>
 
-<span class="n">api</span> <span class="o">=</span> <span class="n">kittn</span><span class="o">.</span><span class="n">authorize</span><span class="p">(</span><span class="s">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="o">.</span><span class="n">kittens</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-</code></pre>
-<pre class="highlight shell"><code>curl <span class="s2">"http://example.com/api/kittens"</span>
-  -H <span class="s2">"Authorization: meowmeowmeow"</span>
+<h2 id="web-service">Web Service</h2>
+
+<p>All API URLs listed in this documentation are relative to <strong>http://cloudcompiler.esy.es/api/</strong>. For example, the <a href="#get-all-supported-languages">/languages</a> API call is reachable at <strong>http://cloudcompiler.esy.es/api/languages</strong></p>
+
+<p>The Cloud Compiler API is a mostly RESTful API. Known caveats:</p>
+
+<ul>
+<li><p>All API calls should be made with HTTP GET or POST.</p></li>
+<li><p>You can consider any non-200 HTTP response code as an error - the returned data will contain more detailed information</p></li>
+<li><p>Note that Cloud Compiler error codes mentioned below are not same as http error codes.</p></li>
+</ul>
+
+<h1 id="methods">Methods</h1>
+
+<h2 id="get-all-supported-languages">Get all supported languages</h2>
+<pre class="highlight shell"><code>curl <span class="s2">"http://cloudcompiler.esy.es/api/languages?onlyPopular=1"</span>
 </code></pre>
 
 <blockquote>
@@ -178,27 +163,85 @@ You must replace <code>meowmeowmeow</code> with your personal API key.
 </blockquote>
 <pre class="highlight json"><code><span class="p">[</span><span class="w">
   </span><span class="p">{</span><span class="w">
-    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Fluffums"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"breed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"calico"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"fluffiness"</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"cuteness"</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Bash"</span><span class="w">
   </span><span class="p">},</span><span class="w">
   </span><span class="p">{</span><span class="w">
-    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Max"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"breed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unknown"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"fluffiness"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"cuteness"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"C"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"C#"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">13</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"C++ 5.1"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w"> 
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"C++14"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">35</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Haskell"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">38</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Java"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">39</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Java7"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">48</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Objective-C"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">52</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Pascal (fpc)"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">53</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Pascal (gpc)"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">54</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Perl"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">56</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PHP"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">61</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Python"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">63</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Python 3"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">65</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Ruby"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">71</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"SQL"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">75</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"VB.NET"</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
 </span></code></pre>
 
-<p>This endpoint retrieves all kittens.</p>
+<p>This endpoint retrieves all the programming languages that are supported by this API.</p>
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">GET http://example.com/api/kittens</code></p>
+<p><code class="prettyprint">GET /languages</code></p>
 
 <h3 id="query-parameters">Query Parameters</h3>
 
@@ -210,55 +253,104 @@ You must replace <code>meowmeowmeow</code> with your personal API key.
 </tr>
 </thead><tbody>
 <tr>
-<td>include_cats</td>
-<td>false</td>
-<td>If set to true, the result will also include cats.</td>
+<td>withVersion</td>
+<td>0</td>
+<td>if set to 1, the result will also include version information for each language.</td>
 </tr>
 <tr>
-<td>available</td>
-<td>true</td>
-<td>If set to false, the result will include kittens that have already been adopted.</td>
+<td>withPopular</td>
+<td>0</td>
+<td>if set to 1, the result will include popular parameter for each language which says whether the language is popular or not (true/false).</td>
+</tr>
+<tr>
+<td>withFileExt</td>
+<td>0</td>
+<td>if set to 1, the result will include supported file extension for each language.</td>
+</tr>
+<tr>
+<td>onlyPopular</td>
+<td>0</td>
+<td>if set to 1, only languages that are popular will be returned.</td>
+</tr>
+<tr>
+<td>onlyUnpopular</td>
+<td>0</td>
+<td>if set to 1, only languages that are not popular will be returned.</td>
 </tr>
 </tbody></table>
 
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
+<h3 id="return-value">Return Value</h3>
 
-<h2 id="get-a-specific-kitten">Get a Specific Kitten</h2>
-<pre class="highlight ruby"><code><span class="nb">require</span> <span class="s1">'kittn'</span>
+<table id="language_return_table">
+  <tr>
+    <td id="first_td">
+      <h3>languages</h3>
+      <p>array</p>
+    </td>
+    <td id="second_td">
+      <table>
+        <tr>
+          <td>
+            id
+          </td>
+          <td>
+            language identifier
+          </td>
+        </tr>
+        <tr>
+          <td>
+            name
+          </td>
+          <td>
+            language name
+          </td>
+        </tr>
+        <tr>
+          <td>
+            version
+          </td>
+          <td>
+            language version (only if withVersion is set to 1)
+          </td>
+        </tr>
+        <tr>
+          <td>
+            popular
+          </td>
+          <td>
+            whether language is popular or not (only if withPopular is set to 1)
+          </td>
+        </tr>
+        <tr>
+          <td>
+            fileExt
+          </td>
+          <td>
+            supported file extension for the language (only if withFileExt is set to 1)
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
 
-<span class="n">api</span> <span class="o">=</span> <span class="no">Kittn</span><span class="o">::</span><span class="no">APIClient</span><span class="p">.</span><span class="nf">authorize!</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="p">.</span><span class="nf">kittens</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</code></pre>
-<pre class="highlight python"><code><span class="kn">import</span> <span class="nn">kittn</span>
-
-<span class="n">api</span> <span class="o">=</span> <span class="n">kittn</span><span class="o">.</span><span class="n">authorize</span><span class="p">(</span><span class="s">'meowmeowmeow'</span><span class="p">)</span>
-<span class="n">api</span><span class="o">.</span><span class="n">kittens</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</code></pre>
-<pre class="highlight shell"><code>curl <span class="s2">"http://example.com/api/kittens/2"</span>
-  -H <span class="s2">"Authorization: meowmeowmeow"</span>
+<h2 id="get-the-language-template">Get the language template</h2>
+<pre class="highlight shell"><code>curl <span class="s2">"http://cloudcompiler.esy.es/api/languages/template/13"</span>
 </code></pre>
 
 <blockquote>
 <p>The above command returns JSON structured like this:</p>
 </blockquote>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Max"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"breed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unknown"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"fluffiness"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"cuteness"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
+  </span><span class="nt">"source"</span><span class="p">:</span><span class="w"> </span><span class="s2">"#include &lt;iostream&gt;\nusing namespace std;\n\nint main() {\n\t\/\/ your code goes here\n\treturn 0;\n}"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 
-<p>This endpoint retrieves a specific kitten.</p>
-
-<aside class="warning">Inside HTML code blocks like this one, you can&rsquo;t use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
+<p>This endpoint retrieves the template for the specified language.</p>
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">GET http://example.com/kittens/&lt;ID&gt;</code></p>
+<p><code class="prettyprint">GET /languages/template/:id</code></p>
 
 <h3 id="url-parameters">URL Parameters</h3>
 
@@ -269,16 +361,405 @@ Remember — a happy kitten is an authenticated kitten!
 </tr>
 </thead><tbody>
 <tr>
-<td>ID</td>
-<td>The ID of the kitten to retrieve</td>
+<td>id</td>
+<td>language identifier of the template to retreive</td>
+</tr>
+</tbody></table>
+
+<h3 id="return-value">Return Value</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>source</td>
+<td>source code of the specified language template</td>
+</tr>
+</tbody></table>
+
+<h2 id="get-the-language-sample-code">Get the language sample code</h2>
+<pre class="highlight shell"><code>curl <span class="s2">"http://cloudcompiler.esy.es/api/languages/sample/13"</span>
+</code></pre>
+
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"source"</span><span class="p">:</span><span class="w"> </span><span class="s2">"#include &lt;iostream&gt;\nusing namespace std; \/\/ consider removing this line in serious projects\n\nint main() {\n\tint intNum = 0;\n\t\n\tcin &gt;&gt; intNum;\n\twhile (intNum != 42) {\n\t\tcout &lt;&lt; intNum &lt;&lt; \"\\n\";\n\t\tcin &gt;&gt; intNum;\n\t}\n\n\treturn 0;\n}"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"input"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1\n2\n10\n42\n11\n"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>This endpoint retrieves the sample code for the specified language.</p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">GET /languages/sample/:id</code></p>
+
+<h3 id="url-parameters">URL Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>language identifier of the sample code to retreive</td>
+</tr>
+</tbody></table>
+
+<h3 id="return-value">Return Value</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>source</td>
+<td>source code of the specified language sample code</td>
+</tr>
+<tr>
+<td>input</td>
+<td>standard input of the sample code</td>
+</tr>
+</tbody></table>
+
+<h2 id="create-a-new-submission">Create a new submission</h2>
+<pre class="highlight shell"><code>curl -H <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
+-d <span class="s1">'{ 
+      "sourceCode": "# This is how submission looks like",
+      "langId": 63,
+      "stdin": "sample input",
+      "timeLimit": 1
+    }'</span> <span class="se">\</span>
+-X POST <span class="se">\</span>
+<span class="s1">'http://cloudcompiler.esy.es/api/submissions/'</span>
+</code></pre>
+
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"FrnO2h"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>This endpoint submits the source code to the API.</p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">POST /submissions</code></p>
+
+<h3 id="query-parameters">Query Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>sourceCode</td>
+<td>null</td>
+<td>source code need to be compiled.</td>
+</tr>
+<tr>
+<td>langId</td>
+<td>null</td>
+<td>language identifier. Language identifiers can be retrieved at <a href="#get-all-supported-languages">/languages</a>.</td>
+</tr>
+<tr>
+<td>stdin</td>
+<td>null</td>
+<td>data that will be given to the program on stdin.</td>
+</tr>
+<tr>
+<td>timeLimit</td>
+<td>0</td>
+<td>when set to 0 time limit will be 5secs. When set to 1 time limit will be 15secs. Once the time limit exceeded program will be terminated.</td>
+</tr>
+</tbody></table>
+
+<aside class="notice" style="text-align: center;">
+    It is preferred to submit the post data in json format. However x-www-form-urlencoded is also supported.
+</aside>
+
+<h3 id="return-value">Return Value</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>id of the new submission (this id will be used to retreive the status).</td>
+</tr>
+</tbody></table>
+
+<h2 id="get-the-submission-status">Get the submission status</h2>
+<pre class="highlight shell"><code>curl <span class="s2">"http://cloudcompiler.esy.es/api/submissions/FrnO2h"</span>
+</code></pre>
+
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"result"</span><span class="p">:</span><span class="w"> </span><span class="s2">"15"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"any_cmperr"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"stdout"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"stderr"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"cmperr"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.02"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"9984"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"signal"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>This endpoint fetches the submission status.</p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">GET /submissions/:id</code></p>
+
+<h3 id="url-parameters">URL Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>submission identifier retreived from <a href="#create-a-new-submission">/submissions</a></td>
+</tr>
+</tbody></table>
+
+<h3 id="query-parameters">Query Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>withSource</td>
+<td>0</td>
+<td>if set to 1, the result will also include submitted source code.</td>
+</tr>
+<tr>
+<td>withInput</td>
+<td>0</td>
+<td>if set to 1, the result will include standard input submitted.</td>
+</tr>
+<tr>
+<td>withLang</td>
+<td>0</td>
+<td>if set to 1, the result will include language details.</td>
+</tr>
+<tr>
+<td>withTimestamp</td>
+<td>0</td>
+<td>if set to 1, the result will include server UNIX timestamp of submission&rsquo;s creation.</td>
+</tr>
+</tbody></table>
+
+<h3 id="return-value">Return Value</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>status</td>
+<td>submission&rsquo;s current status (see <a href="#status">status</a> section).</td>
+</tr>
+<tr>
+<td>result</td>
+<td>submission&rsquo;s current result (see <a href="#result">result</a> section).</td>
+</tr>
+<tr>
+<td>any_cmperr</td>
+<td>whether there is compiler error or not (true/false).</td>
+</tr>
+<tr>
+<td>stdout</td>
+<td>output produced by the program.</td>
+</tr>
+<tr>
+<td>stderr</td>
+<td>stderr produced by the program.</td>
+</tr>
+<tr>
+<td>cmperr</td>
+<td>compilation error information regarding the program.</td>
+</tr>
+<tr>
+<td>time</td>
+<td>execution time in seconds.</td>
+</tr>
+<tr>
+<td>memory</td>
+<td>memory used by the program in kilobytes.</td>
+</tr>
+<tr>
+<td>signal</td>
+<td>signal raised by the program when an error had occurred.</td>
+</tr>
+<tr>
+<td>sourceCode</td>
+<td>source code of the submission (only if withSource is set to 1).</td>
+</tr>
+<tr>
+<td>stdin</td>
+<td>input data of the submission (only if withInput is set to 1).</td>
+</tr>
+<tr>
+<td>langId</td>
+<td>submission&rsquo;s language identifier (only if withLang is set to 1).</td>
+</tr>
+<tr>
+<td>langName</td>
+<td>submission&rsquo;s language name (only if withLang is set to 1).</td>
+</tr>
+<tr>
+<td>langVersion</td>
+<td>submission&rsquo;s language version (only if withLang is set to 1).</td>
+</tr>
+<tr>
+<td>timestamp</td>
+<td>server UNIX timestamp of submission&rsquo;s creation (only if withTimestamp is set to 1).</td>
+</tr>
+</tbody></table>
+
+<h1 id="status">Status</h1>
+
+<p>Variable status returned by the <a href="#get-the-submission-status">submissions/:id</a> method requires further explanation. </p>
+
+<p>Status specifies stage of program&rsquo;s execution. It&rsquo;s values should be interpreted as shown in the below table.</p>
+
+<p>When you use the <a href="#get-the-submission-status">submissions/:id</a> method and status is not equal to 0 then you should wait 3-5 seconds and call the method again.</p>
+
+<p>When the submission&rsquo;s status is 0 you can find out how the program has finished by checking the result variable.</p>
+
+<table><thead>
+<tr>
+<th>Value</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>&lt; 0</td>
+<td>Waiting for compilation – the submission awaits execution in the queue</td>
+</tr>
+<tr>
+<td>0</td>
+<td>Done – the program has finished execution</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Compilation – the program is being compiled</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Running – the program is being executed</td>
+</tr>
+</tbody></table>
+
+<h1 id="result">Result</h1>
+
+<p>Variable result returned by the <a href="#get-the-submission-status">submissions/:id</a> should be interpreted in the following way:</p>
+
+<table><thead>
+<tr>
+<th>Value</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>11</td>
+<td>Compilation error – the program could not be executed due to compilation error</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Runtime error – the program finished because of the runtime error, for example: division by zero, array index out of bounds, uncaught exception</td>
+</tr>
+<tr>
+<td>13</td>
+<td>Time limit exceeded – the program didn&rsquo;t stop before the time limit</td>
+</tr>
+<tr>
+<td>15</td>
+<td>Success – everything went ok</td>
+</tr>
+<tr>
+<td>17</td>
+<td>Memory limit exceeded – the program tried to use more memory than it is allowed to</td>
+</tr>
+<tr>
+<td>19</td>
+<td>Illegal system call – the program tried to call illegal system function</td>
+</tr>
+<tr>
+<td>20</td>
+<td>Internal error – some problem occurred on our server; try to submit the program again and if that fails too, then please contact us</td>
 </tr>
 </tbody></table>
 
           <h1 id="errors">Errors</h1>
 
-<aside class="notice">This error section is stored in a separate file in `includes/_errors.md`. Slate allows you to optionally separate out your docs into many files&hellip;just save them to the `includes` folder and add them to the top of your `index.md`&rsquo;s frontmatter. Files are included in the order listed.</aside>
+<blockquote>
+<p>Example error response:</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"error"</span><span class="p">:</span><span class="w"> </span><span class="s2">"SYSTEM_ERROR"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"errorCode"</span><span class="p">:</span><span class="w"> </span><span class="mi">500</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"errorDesc"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Some system error occurred, Please try again."</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
 
-<p>The Kittn API uses the following error codes:</p>
+<p>Whenever there is an unhandled exception in any of the method instead of their original output data following data will be returned.</p>
+
+<table><thead>
+<tr>
+<th>Parmeter</th>
+<th>Value</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>error</td>
+<td>name of the error</td>
+</tr>
+<tr>
+<td>errorCode</td>
+<td>a 3 digit number to identify the number</td>
+</tr>
+<tr>
+<td>errorDesc</td>
+<td>small description about the error</td>
+</tr>
+</tbody></table>
+
+<aside class="notice" style="text-align: center;">
+    Note that error codes given below are different from the http error codes
+</aside>
+
+<p>Given below is the list of all possible errors identified by their error codes.</p>
 
 <table><thead>
 <tr>
@@ -288,49 +769,49 @@ Remember — a happy kitten is an authenticated kitten!
 </thead><tbody>
 <tr>
 <td>400</td>
-<td>Bad Request &ndash; Your request sucks</td>
+<td>Some unknown error occurred.</td>
 </tr>
 <tr>
-<td>401</td>
-<td>Unauthorized &ndash; Your API key is wrong</td>
+<td>500 / 501 / 502 / 503</td>
+<td>Something wrong happened in the server.</td>
 </tr>
 <tr>
-<td>403</td>
-<td>Forbidden &ndash; The kitten requested is hidden for administrators only</td>
+<td>600</td>
+<td>Provided input for time limit is not valid.</td>
 </tr>
 <tr>
-<td>404</td>
-<td>Not Found &ndash; The specified kitten could not be found</td>
+<td>601</td>
+<td>Language with specified id is not available.</td>
 </tr>
 <tr>
-<td>405</td>
-<td>Method Not Allowed &ndash; You tried to access a kitten with an invalid method</td>
+<td>602</td>
+<td>Submission with a specified id could not be found.</td>
 </tr>
 <tr>
-<td>406</td>
-<td>Not Acceptable &ndash; You requested a format that isn&rsquo;t json</td>
+<td>603</td>
+<td>No template available for the specified language id.</td>
 </tr>
 <tr>
-<td>410</td>
-<td>Gone &ndash; The kitten requested has been removed from our servers</td>
+<td>604</td>
+<td>No sample code available for the specified language id.</td>
 </tr>
 <tr>
-<td>418</td>
-<td>I&rsquo;m a teapot</td>
+<td>700</td>
+<td>Unable to find the source code in the input parameters.</td>
 </tr>
 <tr>
-<td>429</td>
-<td>Too Many Requests &ndash; You&rsquo;re requesting too many kittens! Slow down!</td>
-</tr>
-<tr>
-<td>500</td>
-<td>Internal Server Error &ndash; We had a problem with our server. Try again later.</td>
-</tr>
-<tr>
-<td>503</td>
-<td>Service Unavailable &ndash; We&rsquo;re temporarially offline for maintanance. Please try again later.</td>
+<td>701</td>
+<td>Unable to find the language id in the input parameters.</td>
 </tr>
 </tbody></table>
+
+<aside class="success" style="text-align: center;">
+  While handling errors, first check the http code. If it is non-200 then handle the error distinguishing with the help of the error data returned.
+</aside>
+
+<aside style="text-align: center; margin-top: 35px; margin-bottom: 25px; font-weight: 600; background: transparent;">
+    &copy; 2016 <a href="https://github.com/harish095">Harish Kandala</a>
+</aside>
 
       </div>
       <div class="dark-box">
